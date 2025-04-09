@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OgrodoSystem - Zarządzanie Ogrodami Działkowymi</title>
+    <style>
+        :root {
+            --primary-color: #3a8249;
+            --secondary-color: #f5a623;
+            --text-color: #333;
+            --light-color: #f9f9f9;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: white;
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .logo-icon {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 30px;
+        }
+        
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            background-color: #2c6338;
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #d89016;
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('/api/placeholder/1200/600') center/cover;
+            padding: 150px 0 100px;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        .features {
+            padding: 80px 0;
+            background-color: var(--light-color);
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .section-header h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .how-it-works {
+            padding: 80px 0;
+        }
+        
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+        
+        .step {
+            text-align: center;
+            width: 200px;
+            margin: 0 auto 30px;
+        }
+        
+        .step-number {
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            margin: 0 auto 20px;
+            font-weight: bold;
+        }
+        
+        .testimonials {
+            padding: 80px 0;
+            background-color: var(--light-color);
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .testimonial-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+        
+        .testimonial-author {
+            font-weight: bold;
+        }
+        
+        .pricing {
+            padding: 80px 0;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .pricing-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 40px 30px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .pricing-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .pricing-card.featured {
+            border: 3px solid var(--primary-color);
+            position: relative;
+        }
+        
+        .featured-label {
+            background-color: var(--primary-color);
+            color: white;
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 20px 0;
+            color: var(--primary-color);
+        }
+        
+        .price span {
+            font-size: 1rem;
+            color: #777;
+        }
+        
+        .features-list {
+            margin: 30px 0;
+            list-style: none;
+        }
+        
+        .features-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cta {
+            background: linear-gradient(rgba(58, 130, 73, 0.9), rgba(58, 130, 73, 0.9)), url('/api/placeholder/1200/500') center/cover;
+            padding: 100px 0;
+            text-align: center;
+            color: white;
+        }
+        
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .cta p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 50px 0 20px;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-column h3 {
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .steps {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .step {
+                margin-bottom: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <span class="logo-icon">🌱</span>
+                    OgrodoSystem
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#features">Funkcje</a></li>
+                    <li><a href="#how-it-works">Jak to działa</a></li>
+                    <li><a href="#pricing">Cennik</a></li>
+                    <li><a href="#contact">Kontakt</a></li>
+                    <li><a href="#" class="btn">Zaloguj się</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Nowoczesne zarządzanie ogrodami działkowymi</h1>
+            <p>Łatwe pobieranie opłat, skuteczna komunikacja z działkowcami i przejrzyste zarządzanie finansami w jednym miejscu.</p>
+            <a href="#" class="btn btn-secondary">Rozpocznij za darmo</a>
+            <a href="#demo" class="btn">Zobacz demo</a>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Dlaczego OgrodoSystem?</h2>
+                <p>Rozwiązanie stworzone specjalnie dla zarządów ogrodów działkowych</p>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Łatwe płatności</h3>
+                    <p>Automatyzacja pobierania opłat za działki, media i składki członkowskie. Przypomnienia, potwierdzenia i raporty płatności.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Przejrzyste finanse</h3>
+                    <p>Pełna kontrola nad finansami ogrodu. Budżetowanie, raportowanie i analityka wydatków i wpływów.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Aplikacja mobilna</h3>
+                    <p>Dostęp do systemu z dowolnego miejsca. Powiadomienia, opłaty i informacje o ogrodzie zawsze pod ręką.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📢</div>
+                    <h3>Komunikacja</h3>
+                    <p>Łatwe przekazywanie informacji wszystkim działkowcom przez SMS, email lub powiadomienia w aplikacji.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3>Baza działkowców</h3>
+                    <p>Pełne zarządzanie danymi działkowców, historiami płatności i kontaktami w jednym miejscu.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Bezpieczeństwo</h3>
+                    <p>Szyfrowanie danych, bezpieczne płatności online i regularnie aktualizowane zabezpieczenia.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>Jak działa OgrodoSystem?</h2>
+                <p>Rozpocznij korzystanie z systemu w kilku prostych krokach</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Rejestracja</h3>
+                    <p>Załóż konto dla Twojego ogrodu działkowego i wprowadź podstawowe informacje.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Dodaj działkowców</h3>
+                    <p>Zaimportuj listę działkowców lub dodaj ich ręcznie do systemu.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Ustaw opłaty</h3>
+                    <p>Skonfiguruj rodzaje płatności, terminy i kwoty dla różnych kategorii.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Gotowe!</h3>
+                    <p>System automatycznie wyśle powiadomienia o płatnościach i będzie monitorować wpłaty.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2>Co mówią nasi użytkownicy</h2>
+                <p>Dołącz do setek zadowolonych zarządów ogrodów działkowych w całej Polsce</p>
+            </div>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Dzięki OgrodoSystem zaległości w opłatach zmniejszyły się o 70%. System powiadomień działa doskonale, a finanse naszego ogrodu nigdy nie były tak przejrzyste."</p>
+                    <p class="testimonial-author">Jan Kowalski, Prezes ROD "Słoneczny"</p>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Wcześniej spędzaliśmy dziesiątki godzin na rozliczeniach i przypominaniu o opłatach. Teraz wszystko dzieje się automatycznie, a my mamy czas na prawdziwe zarządzanie ogrodem."</p>
+                    <p class="testimonial-author">Anna Nowak, Skarbnik ROD "Zielona Dolina"</p>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Aplikacja mobilna to strzał w dziesiątkę. Nasi działkowcy mogą opłacać składki, otrzymywać ważne informacje i zgłaszać problemy bez wychodzenia z domu."</p>
+                    <p class="testimonial-author">Piotr Wiśniewski, Administrator ROD "Pod Lipami"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2>Wybierz plan dla swojego ogrodu</h2>
+                <p>Przejrzyste ceny dostosowane do wielkości Twojego ogrodu</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Mały ogród</h3>
+                    <div class="price">99 zł <span>/miesiąc</span></div>
+                    <p>Idealne dla ogrodów do 50 działek</p>
+                    <ul class="features-list">
+                        <li>Zarządzanie płatnościami</li>
+                        <li>Baza działkowców</li>
+                        <li>Podstawowe raporty</li>
+                        <li>Email i SMS (limit 100/mies.)</li>
+                        <li>1 administrator</li>
+                    </ul>
+                    <a href="#" class="btn">Wybierz plan</a>
+                </div>
+                <div class="pricing-card featured">
+                    <div class="featured-label">Najpopularniejszy</div>
+                    <h3>Średni ogród</h3>
+                    <div class="price">199 zł <span>/miesiąc</span></div>
+                    <p>Idealne dla ogrodów 50-200 działek</p>
+                    <ul class="features-list">
+                        <li>Wszystko z planu Mały</li>
+                        <li>Zaawansowane raporty finansowe</li>
+                        <li>Aplikacja mobilna</li>
+                        <li>Email i SMS (limit 500/mies.)</li>
+                        <li>3 administratorów</li>
+                    </ul>
+                    <a href="#" class="btn btn-secondary">Wybierz plan</a>
+                </div>
+                <div class="pricing-card">
+                    <h3>Duży ogród</h3>
+                    <div class="price">349 zł <span>/miesiąc</span></div>
+                    <p>Idealne dla ogrodów powyżej 200 działek</p>
+                    <ul class="features-list">
+                        <li>Wszystko z planu Średni</li>
+                        <li>API dla integracji</li>
+                        <li>Priorytetowe wsparcie</li>
+                        <li>Nielimitowane powiadomienia</li>
+                        <li>10 administratorów</li>
+                    </ul>
+                    <a href="#" class="btn">Wybierz plan</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container">
+            <h2>Gotowy na łatwiejsze zarządzanie ogrodem?</h2>
+            <p>Dołącz do setek ogrodów działkowych, które już korzystają z OgrodoSystem i zwiększ efektywność swoich działań.</p>
+            <a href="#" class="btn btn-secondary">Rozpocznij 14-dniowy okres próbny</a>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h3>OgrodoSystem</h3>
+                    <p>Nowoczesne rozwiązanie do zarządzania ogrodami działkowymi i społecznościami działkowców.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Nawigacja</h3>
+                    <ul class="footer-links">
+                        <li><a href="#features">Funkcje</a></li>
+                        <li><a href="#how-it-works">Jak to działa</a></li>
+                        <li><a href="#pricing">Cennik</a></li>
+                        <li><a href="#contact">Kontakt</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Wsparcie</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Centrum pomocy</a></li>
+                        <li><a href="#">Dokumentacja</a></li>
+                        <li><a href="#">Szkolenia</a></li>
+                        <li><a href="#">Kontakt z obsługą</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Kontakt</h3>
+                    <ul class="footer-links">
+                        <li>kontakt@ogrodosystem.pl</li>
+                        <li>+48 123 456 789</li>
+                        <li>ul. Ogrodowa 15, 00-001 Warszawa</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 OgrodoSystem. Wszelkie prawa zastrzeżone.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
