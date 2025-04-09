@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Kontenerów</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .container-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .container-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .container-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .container-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .container-details {
+            margin-top: 15px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #7f8c8d;
+        }
+
+        .detail-value {
+            color: #333;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: 500;
+            text-align: center;
+            width: 100px;
+        }
+
+        .status-available {
+            background-color: #e6f7e9;
+            color: #27ae60;
+        }
+
+        .status-in-use {
+            background-color: #ffeaa7;
+            color: #d35400;
+        }
+
+        .status-maintenance {
+            background-color: #f8d7da;
+            color: #c0392b;
+        }
+
+        .search-bar {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .search-input {
+            padding: 10px 15px;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .filter-options {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-button {
+            padding: 8px 16px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-button:hover, .filter-button.active {
+            background-color: #3498db;
+            color: #fff;
+            border-color: #3498db;
+        }
+
+        /* Styl dla przycisku Dodaj */
+        .add-button-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .add-button {
+            padding: 12px 30px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-button:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .add-button:active {
+            transform: translateY(0);
+        }
+
+        /* Modal dla dodawania kontenera */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .close-modal {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .cancel-button {
+            padding: 10px 20px;
+            background-color: #f1f2f6;
+            color: #333;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .cancel-button:hover {
+            background-color: #dfe4ea;
+        }
+
+        .save-button {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .save-button:hover {
+            background-color: #2980b9;
+        }
+
+        @media (max-width: 768px) {
+            .container-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            body {
+                padding: 10px;
+            }
+
+            .modal-content {
+                margin: 20% auto;
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>System Zarządzania Kontenerami</h1>
+        <p>Sprawdź dostępność i informacje o kontenerach</p>
+    </div>
+
+    <!-- Przycisk Dodaj -->
+    <div class="add-button-container">
+        <button id="add-container-button" class="add-button">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Dodaj kontener
+        </button>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" class="search-input" placeholder="Wyszukaj kontener po numerze...">
+    </div>
+
+    <div class="filter-options">
+        <button class="filter-button active">Wszystkie</button>
+        <button class="filter-button">Dostępne</button>
+        <button class="filter-button">W użyciu</button>
+        <button class="filter-button">W serwisie</button>
+    </div>
+
+    <div class="container-grid">
+        <!-- Kontener 1 -->
+        <div class="container-card">
+            <div class="container-number">Kontener #CON-2023-001</div>
+            <div class="container-details">
+                <div class="detail-row">
+                    <span class="detail-label">Status:</span>
+                    <span class="status status-available">Dostępny</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Rozmiar:</span>
+                    <span class="detail-value">20 stóp</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Typ:</span>
+                    <span class="detail-value">Standard</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Lokalizacja:</span>
+                    <span class="detail-value">Sektor A</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kontener 2 -->
+        <div class="container-card">
+            <div class="container-number">Kontener #CON-2023-002</div>
+            <div class="container-details">
+                <div class="detail-row">
+                    <span class="detail-label">Status:</span>
+                    <span class="status status-in-use">W użyciu</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Rozmiar:</span>
+                    <span class="detail-value">40 stóp</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Typ:</span>
+                    <span class="detail-value">Chłodniczy</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Lokalizacja:</span>
+                    <span class="detail-value">Sektor B</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kontener 3 -->
+        <div class="container-card">
+            <div class="container-number">Kontener #CON-2023-003</div>
+            <div class="container-details">
+                <div class="detail-row">
+                    <span class="detail-label">Status:</span>
+                    <span class="status status-maintenance">W serwisie</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Rozmiar:</span>
+                    <span class="detail-value">20 stóp</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Typ:</span>
+                    <span class="detail-value">Open Top</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Lokalizacja:</span>
+                    <span class="detail-value">Sektor C</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kontener 4 -->
+        <div class="container-card">
+            <div class="container-number">Kontener #CON-2023-004</div>
+            <div class="container-details">
+                <div class="detail-row">
+                    <span class="detail-label">Status:</span>
+                    <span class="status status-available">Dostępny</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Rozmiar:</span>
+                    <span class="detail-value">40 stóp</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Typ:</span>
+                    <span class="detail-value">Flat Rack</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Lokalizacja:</span>
+                    <span class="detail-value">Sektor A</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kontener 5 -->
+        <div class="container-card">
+            <div class="container-number">Kontener #CON-2023-005</div>
+            <div class="container-details">
+                <div class="detail-row">
+                    <span class="detail-label">Status:</span>
+                    <span class="status status-in-use">W użyciu</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Rozmiar:</span>
+                    <span class="detail-value">20 stóp</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Typ:</span>
+                    <span class="detail-value">Standard</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Lokalizacja:</span>
+                    <span class="detail-value">Sektor D</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kontener 6 -->
+        <div class="container-card">
+            <div class="container-number">Kontener #CON-2023-006</div>
+            <div class="container-details">
+                <div class="detail-row">
+                    <span class="detail-label">Status:</span>
+                    <span class="status status-available">Dostępny</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Rozmiar:</span>
+                    <span class="detail-value">40 stóp</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Typ:</span>
+                    <span class="detail-value">High Cube</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Lokalizacja:</span>
+                    <span class="detail-value">Sektor B</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal dodawania kontenera -->
+    <div id="add-container-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Dodaj nowy kontener</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <form id="add-container-form">
+                <div class="form-group">
+                    <label for="container-id">Numer kontenera</label>
+                    <input type="text" id="container-id" required placeholder="np. CON-2023-007">
+                </div>
+                <div class="form-group">
+                    <label for="container-status">Status</label>
+                    <select id="container-status" required>
+                        <option value="available">Dostępny</option>
+                        <option value="in-use">W użyciu</option>
+                        <option value="maintenance">W serwisie</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="container-size">Rozmiar</label>
+                    <select id="container-size" required>
+                        <option value="20">20 stóp</option>
+                        <option value="40">40 stóp</option>
+                        <option value="45">45 stóp</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="container-type">Typ</label>
+                    <select id="container-type" required>
+                        <option value="standard">Standard</option>
+                        <option value="refrigerated">Chłodniczy</option>
+                        <option value="open-top">Open Top</option>
+                        <option value="flat-rack">Flat Rack</option>
+                        <option value="high-cube">High Cube</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="container-location">Lokalizacja</label>
+                    <select id="container-location" required>
+                        <option value="A">Sektor A</option>
+                        <option value="B">Sektor B</option>
+                        <option value="C">Sektor C</option>
+                        <option value="D">Sektor D</option>
+                    </select>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="cancel-button" id="cancel-button">Anuluj</button>
+                    <button type="submit" class="save-button">Zapisz</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.filter-button');
+            const cards = document.querySelectorAll('.container-card');
+            const searchInput = document.querySelector('.search-input');
+            const addButton = document.getElementById('add-container-button');
+            const modal = document.getElementById('add-container-modal');
+            const closeModal = document.querySelector('.close-modal');
+            const cancelButton = document.getElementById('cancel-button');
+            const addContainerForm = document.getElementById('add-container-form');
+            const containerGrid = document.querySelector('.container-grid');
+            
+            // Obsługa filtrowania
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Usunięcie klasy active ze wszystkich przycisków
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Dodanie klasy active do klikniętego przycisku
+                    this.classList.add('active');
+                    
+                    const filterValue = this.textContent.trim().toLowerCase();
+                    
+                    cards.forEach(card => {
+                        const status = card.querySelector('.status').textContent.toLowerCase();
+                        
+                        if (filterValue === 'wszystkie') {
+                            card.style.display = '';
+                        } else if (filterValue === 'dostępne' && status === 'dostępny') {
+                            card.style.display = '';
+                        } else if (filterValue === 'w użyciu' && status === 'w użyciu') {
+                            card.style.display = '';
+                        } else if (filterValue === 'w serwisie' && status === 'w serwisie') {
+                            card.style.display = '';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Obsługa wyszukiwania
+            searchInput.addEventListener('input', function() {
+                const searchValue = this.value.toLowerCase();
+                
+                cards.forEach(card => {
+                    const containerNumber = card.querySelector('.container-number').textContent.toLowerCase();
+                    
+                    if (containerNumber.includes(searchValue)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+
+            // Obsługa przycisku dodawania kontenera
+            addButton.addEventListener('click', function() {
+                modal.style.display = 'block';
+            });
+
+            // Zamykanie modalu
+            closeModal.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+
+            cancelButton.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+
+            // Kliknięcie poza modalem zamyka go
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // Obsługa formularza dodawania kontenera
+            addContainerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // Pobieranie danych z formularza
+                const containerId = document.getElementById('container-id').value;
+                const containerStatus = document.getElementById('container-status').value;
+                const containerSize = document.getElementById('container-size').value;
+                const containerType = document.getElementById('container-type').value;
+                const containerLocation = document.getElementById('container-location').value;
+
+                // Tworzenie nowej karty kontenera
+                const newCard = document.createElement('div');
+                newCard.className = 'container-card';
+
+                // Mapowanie wartości na teksty wyświetlane
+                const statusText = {
+                    'available': 'Dostępny',
+                    'in-use': 'W użyciu',
+                    'maintenance': 'W serwisie'
+                };
+
+                const statusClass = {
+                    'available': 'status-available',
+                    'in-use': 'status-in-use',
+                    'maintenance': 'status-maintenance'
+                };
+
+                const typeText = {
+                    'standard': 'Standard',
+                    'refrigerated': 'Chłodniczy',
+                    'open-top': 'Open Top',
+                    'flat-rack': 'Flat Rack',
+                    'high-cube': 'High Cube'
+                };
+
+                const sizeText = {
+                    '20': '20 stóp',
+                    '40': '40 stóp',
+                    '45': '45 stóp'
+                };
+
+                const locationText = {
+                    'A': 'Sektor A',
+                    'B': 'Sektor B',
+                    'C': 'Sektor C',
+                    'D': 'Sektor D'
+                };
+
+                // Tworzenie HTML dla karty
+                newCard.innerHTML = `
+                    <div class="container-number">Kontener #${containerId}</div>
+                    <div class="container-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Status:</span>
+                            <span class="status ${statusClass[containerStatus]}">${statusText[containerStatus]}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Rozmiar:</span>
+                            <span class="detail-value">${sizeText[containerSize]}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Typ:</span>
+                            <span class="detail-value">${typeText[containerType]}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Lokalizacja:</span>
+                            <span class="detail-value">${locationText[containerLocation]}</span>
+                        </div>
+                    </div>
+                `;
+
+                // Dodanie karty do siatki
+                containerGrid.prepend(newCard);
+
+                // Zamknięcie modalu i reset formularza
+                modal.style.display = 'none';
+                addContainerForm.reset();
+
+                // Informacja o dodaniu kontenera (opcjonalnie)
+                alert(`Kontener #${containerId} został dodany pomyślnie!`);
+            });
+        });
+    </script>
+</body>
+</html>
