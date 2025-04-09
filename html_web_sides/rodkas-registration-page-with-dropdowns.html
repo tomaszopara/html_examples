@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RODKas - Rejestracja Użytkownika</title>
+    <style>
+        :root {
+            --primary: #2e8b57;
+            --primary-light: #3aa76d;
+            --primary-dark: #1e6e43;
+            --secondary: #00b8d4;
+            --light-gray: #f5f5f5;
+            --gray: #e0e0e0;
+            --dark-gray: #333;
+            --white: #fff;
+            --error: #f44336;
+            --success: #4caf50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        .header {
+            background-color: var(--white);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-item {
+            margin-left: 25px;
+            position: relative;
+        }
+        
+        .nav-link {
+            color: var(--dark-gray);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s;
+            padding: 10px 0;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary);
+        }
+        
+        .nav-link i {
+            margin-right: 5px;
+        }
+        
+        .dropdown-icon {
+            margin-left: 5px;
+            font-size: 0.8rem;
+        }
+        
+        /* Dropdown Menu Styles */
+        .dropdown {
+            position: relative;
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: var(--white);
+            min-width: 180px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            padding: 8px 0;
+            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+        }
+        
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown-item {
+            display: block;
+            padding: 8px 20px;
+            color: var(--dark-gray);
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .dropdown-item:hover {
+            background-color: var(--light-gray);
+            color: var(--primary);
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            padding: 40px 0;
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--primary);
+            position: relative;
+        }
+        
+        .page-title h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .page-title:after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background-color: var(--secondary);
+            margin: 0 auto;
+        }
+        
+        .registration-form {
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .form-title {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: var(--primary-dark);
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(46, 139, 87, 0.2);
+            outline: none;
+        }
+        
+        .form-hint {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .password-rules {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        
+        .password-rule {
+            margin-bottom: 8px;
+            color: #666;
+            transition: color 0.3s;
+        }
+        
+        .password-rule.valid {
+            color: var(--success);
+        }
+        
+        .password-rule i {
+            margin-right: 5px;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+        }
+        
+        .btn-secondary {
+            background-color: #7f8c8d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #95a5a6;
+        }
+        
+        .input-error {
+            border-color: var(--error) !important;
+        }
+        
+        .error-message {
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        /* Footer Styles */
+        .footer {
+            background-color: var(--dark-gray);
+            color: var(--white);
+            padding: 40px 0 20px;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 20px;
+            padding-right: 20px;
+        }
+        
+        .footer-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-link {
+            margin-bottom: 10px;
+        }
+        
+        .footer-link a {
+            color: var(--gray);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-link a:hover {
+            color: var(--secondary);
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                padding: 15px 0;
+            }
+            
+            .nav-menu {
+                margin-top: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .nav-item {
+                margin: 5px 10px;
+            }
+            
+            .dropdown-menu {
+                position: static;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                box-shadow: none;
+                margin-left: 20px;
+                display: none;
+            }
+            
+            .dropdown:hover .dropdown-menu {
+                display: block;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+            
+            .footer-section {
+                padding-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">
+                    <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50 10C27.909 10 10 27.909 10 50C10 72.091 27.909 90 50 90C72.091 90 90 72.091 90 50C90 27.909 72.091 10 50 10Z" fill="#2e8b57"/>
+                        <path d="M60 30C60 35.523 55.523 40 50 40C44.477 40 40 35.523 40 30C40 24.477 44.477 20 50 20C55.523 20 60 24.477 60 30Z" fill="white"/>
+                        <path d="M30 60C30 54.477 34.477 50 40 50C45.523 50 50 54.477 50 60C50 65.523 45.523 70 40 70C34.477 70 30 65.523 30 60Z" fill="white"/>
+                        <path d="M70 60C70 65.523 65.523 70 60 70C54.477 70 50 65.523 50 60C50 54.477 54.477 50 60 50C65.523 50 70 54.477 70 60Z" fill="white"/>
+                        <path d="M50 40V50" stroke="white" stroke-width="3"/>
+                        <path d="M40 70L30 80" stroke="white" stroke-width="3"/>
+                        <path d="M60 70L70 80" stroke="white" stroke-width="3"/>
+                    </svg>
+                    RODKas
+                </a>
+                <nav>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i>🏠</i> Home
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link">
+                                <i>👥</i> Użytkownicy <span class="dropdown-icon">▼</span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="#" class="dropdown-item">Lista użytkowników</a>
+                                <a href="#" class="dropdown-item">Dodaj użytkownika</a>
+                                <a href="#" class="dropdown-item">Zarządzaj uprawnieniami</a>
+                                <a href="#" class="dropdown-item">Raporty</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link">
+                                <i>🌱</i> Ogrody <span class="dropdown-icon">▼</span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="#" class="dropdown-item">Lista ogrodów</a>
+                                <a href="#" class="dropdown-item">Dodaj ogród</a>
+                                <a href="#" class="dropdown-item">Mapa ogrodów</a>
+                                <a href="#" class="dropdown-item">Statystyki</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link">
+                                <i>💰</i> Opłaty <span class="dropdown-icon">▼</span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="#" class="dropdown-item">Wszystkie opłaty</a>
+                                <a href="#" class="dropdown-item">Dodaj opłatę</a>
+                                <a href="#" class="dropdown-item">Historia opłat</a>
+                                <a href="#" class="dropdown-item">Raport finansowy</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link">
+                                <i>🔢</i> Liczniki <span class="dropdown-icon">▼</span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="#" class="dropdown-item">Stan liczników</a>
+                                <a href="#" class="dropdown-item">Odczyty liczników</a>
+                                <a href="#" class="dropdown-item">Historia zużycia</a>
+                                <a href="#" class="dropdown-item">Raporty</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link">
+                                <i>💳</i> Płatności <span class="dropdown-icon">▼</span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="#" class="dropdown-item">Wszystkie płatności</a>
+                                <a href="#" class="dropdown-item">Dodaj płatność</a>
+                                <a href="#" class="dropdown-item">Historia płatności</a>
+                                <a href="#" class="dropdown-item">Zaległe płatności</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i>🚪</i> Wyloguj
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Section -->
+    <main class="main-content">
+        <div class="container">
+            <div class="page-title">
+                <h1>DODAWANIE DZIAŁKOWCA</h1>
+            </div>
+            
+            <form class="registration-form" id="registrationForm">
+                <h2 class="form-title">Dodawanie działkowca (Skałakowo)</h2>
+                
+                <div class="form-group">
+                    <label for="email" class="form-label">Nazwa użytkownika (email)</label>
+                    <input type="email" id="email" name="email" class="form-input" placeholder="Wpisz email jako login..." required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="firstName" class="form-label">Imię</label>
+                    <input type="text" id="firstName" name="firstName" class="form-input" placeholder="Wpisz imię..." required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lastName" class="form-label">Nazwisko</label>
+                    <input type="text" id="lastName" name="lastName" class="form-input" placeholder="Wpisz nazwisko..." required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="accountNumber" class="form-label">Individual account number</label>
+                    <input type="text" id="accountNumber" name="accountNumber" class="form-input" placeholder="26 liczb subkonta..." required>
+                    <div class="form-hint">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" class="form-input" required>
+                    
+                    <ul class="password-rules">
+                        <li class="password-rule" id="rule1"><i>◯</i> Your password can't be too similar to your other personal information.</li>
+                        <li class="password-rule" id="rule2"><i>◯</i> Your password must contain at least 8 characters.</li>
+                        <li class="password-rule" id="rule3"><i>◯</i> Your password can't be a commonly used password.</li>
+                        <li class="password-rule" id="rule4"><i>◯</i> Your password can't be entirely numeric.</li>
+                    </ul>
+                </div>
+                
+                <div class="form-group">
+                    <label for="passwordConfirm" class="form-label">Password confirmation</label>
+                    <input type="password" id="passwordConfirm" name="passwordConfirm" class="form-input" required>
+                    <div class="form-hint">Enter the same password as before, for verification.</div>
+                    <div class="error-message" id="passwordError">Passwords do not match!</div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Register</button>
+                    <button type="button" class="btn btn-secondary">Anuluj</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 class="footer-title">O nas</h3>
+                    <p>RODKas to nowoczesny system zarządzania Rodzinnymi Ogródkami Działkowymi, który ułatwia komunikację i organizację pracy w ogrodach działkowych.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">Szybkie linki</h3>
+                    <ul class="footer-links">
+                        <li class="footer-link"><a href="#">Strona główna</a></li>
+                        <li class="footer-link"><a href="#">Ogrody</a></li>
+                        <li class="footer-link"><a href="#">Płatności</a></li>
+                        <li class="footer-link"><a href="#">Kontakt</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">Kontakt</h3>
+                    <ul class="footer-links">
+                        <li class="footer-link">Email: kontakt@rodkas.pl</li>
+                        <li class="footer-link">Telefon: +48 123 456 789</li>
+                        <li class="footer-link">Adres: ul. Ogrodowa 123, 00-001 Warszawa</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2025 RODKas. Wszelkie prawa zastrzeżone.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('passwordConfirm');
+            const passwordError = document.getElementById('passwordError');
+            const rule1 = document.getElementById('rule1');
+            const rule2 = document.getElementById('rule2');
+            const rule3 = document.getElementById('rule3');
+            const rule4 = document.getElementById('rule4');
+            const form = document.getElementById('registrationForm');
+            
+            // Password validation
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                
+                // Rule 2: At least 8 characters
+                if (password.length >= 8) {
+                    rule2.classList.add('valid');
+                    rule2.innerHTML = '<i>✓</i> Your password must contain at least 8 characters.';
+                } else {
+                    rule2.classList.remove('valid');
+                    rule2.innerHTML = '<i>◯</i> Your password must contain at least 8 characters.';
+                }
+                
+                // Rule 4: Not entirely numeric
+                if (!/^\d+$/.test(password) && password.length > 0) {
+                    rule4.classList.add('valid');
+                    rule4.innerHTML = '<i>✓</i> Your password can\'t be entirely numeric.';
+                } else {
+                    rule4.classList.remove('valid');
+                    rule4.innerHTML = '<i>◯</i> Your password can\'t be entirely numeric.';
+                }
+                
+                // Simple check for common passwords (very basic)
+                const commonPasswords = ['password', '12345678', 'qwerty', 'admin123'];
+                if (!commonPasswords.includes(password.toLowerCase()) && password.length > 0) {
+                    rule3.classList.add('valid');
+                    rule3.innerHTML = '<i>✓</i> Your password can\'t be a commonly used password.';
+                } else {
+                    rule3.classList.remove('valid');
+                    rule3.innerHTML = '<i>◯</i> Your password can\'t be a commonly used password.';
+                }
+                
+                // Check for password match
+                if (confirmPasswordInput.value && confirmPasswordInput.value !== password) {
+                    passwordError.style.display = 'block';
+                    confirmPasswordInput.classList.add('input-error');
+                } else if (confirmPasswordInput.value) {
+                    passwordError.style.display = 'none';
+                    confirmPasswordInput.classList.remove('input-error');
+                }
+            });
+            
+            // Confirm password validation
+            confirmPasswordInput.addEventListener('input', function() {
+                if (this.value !== passwordInput.value) {
+                    passwordError.style.display = 'block';
+                    this.classList.add('input-error');
+                } else {
+                    passwordError.style.display = 'none';
+                    this.classList.remove('input-error');
+                }
+            });
+            
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Check if passwords match
+                if (passwordInput.value !== confirmPasswordInput.value) {
+                    passwordError.style.display = 'block';
+                    confirmPasswordInput.classList.add('input-error');
+                    return;
+                }
+                
+                // Here you would normally submit the form to the server
+                alert('Form submitted successfully!');
+                
+                // For demo purposes, let's reset the form
+                form.reset();
+                rule1.classList.remove('valid');
+                rule2.classList.remove('valid');
+                rule3.classList.remove('valid');
+                rule4.classList.remove('valid');
+                rule1.innerHTML = '<i>◯</i> Your password can\'t be too similar to your other personal information.';
+                rule2.innerHTML = '<i>◯</i> Your password must contain at least 8 characters.';
+                rule3.innerHTML = '<i>◯</i> Your password can\'t be a commonly used password.';
+                rule4.innerHTML = '<i>◯</i> Your password can\'t be entirely numeric.';
+            });
+        });
+    </script>
+</body>
+</html>
